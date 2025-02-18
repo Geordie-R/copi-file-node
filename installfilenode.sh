@@ -17,7 +17,7 @@ node_folder="coti-node"
 if [[ $logging == true ]];
 then
 echo "Logging turned on"
-exec > >(tee -i $LOG_LOCATION/gcnode.log)
+exec > >(tee -i $LOG_LOCATION/filenode.log)
 exec 2>&1
 fi
 
@@ -43,19 +43,6 @@ function removequotes(){
 function lowercase(){
   echo $1 | awk '{print tolower($0)}'
 }
-
-
-new_version_tag_final=""
-new_version_tag=$(curl -s https://api.github.com/repos/coti-io/$node_folder/releases/latest | jq ".tag_name")
-
-
-#Remove the front and end double quote
-new_version_tag=$(removequotes "$new_version_tag")
-testnet_version="3.1.3"
-API_key=""
-coti_dir=""
-
-echo "Latest version for mainnet is $new_version_tag"
 
 shopt -s globstar dotglob
 
@@ -125,11 +112,10 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 echo "Welcome to the COPI File Node Installer . We will begin to ask you a series of questions.  Please have to hand:"
 echo "✅ Your SSH Port No"
 echo "✅ Your Ubuntu Username"
+echo "✅ Your Pool Access Key"
 # echo "✅ Your email address"
-# echo "✅ Your server hostname from Godaddy or namecheap etc e.g. coti.mynode.com"
-# echo "✅ Your API Key if you are an exchange. If you are not an exchange, leave this empty."
-# echo "✅ Your wallet p key (if you are not an exchange)"
-# echo "✅ Your ws key (if you are not an exchange)"
+# echo "✅ Your server hostname from Godaddy or namecheap etc e.g. copi.mynode.com"
+
 
 #if [[ $action == "filenode" ]];
 #then
@@ -139,12 +125,12 @@ echo "✅ Your Ubuntu Username"
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
 read -p "What is your ssh port number (likely 22 if you do not know)?: " portno
-read -p "What is your ubuntu username (use copi if unsure as it will be created fresh) ?: " username
-read -p "What is your email address?: " email
-read -p "What is your server host name e.g. tutorialnode.cotinodes.com?: " servername
+read -p "What is your ubuntu username (use copi if unsure as it will be created fresh. Do not use root) ?: " username
+# read -p "What is your email address?: " email
+# read -p "What is your server host name e.g. tutorialnode.copinode.com?: " servername
 
 #Make the servername lowercase
-servername=$(lowercase $servername)
+#servername=$(lowercase $servername)
 
 read -p "Exchanges may be provided with an API key.  Please enter it now, or leave it empty and press enter if you are not an exchange:" API_key
 
