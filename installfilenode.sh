@@ -113,29 +113,19 @@ echo "Welcome to the COPI File Node Installer . We will begin to ask you a serie
 echo "✅ Your SSH Port No"
 echo "✅ Your Ubuntu Username"
 echo "✅ Your Pool Access Key"
-# echo "✅ Your email address"
-# echo "✅ Your server hostname from Godaddy or namecheap etc e.g. copi.mynode.com"
-
-
-#if [[ $action == "filenode" ]];
-#then
-#echo "✅ What version of coti node you would like to use. Coti will communicate this to you. Write latest ONLY if they tell you to use latest commited version."
-#fi
 
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
 read -p "What is your ssh port number (likely 22 if you do not know)?: " portno
 read -p "What is your ubuntu username (use copi if unsure as it will be created fresh. Do not use root) ?: " username
-# read -p "What is your email address?: " email
-# read -p "What is your server host name e.g. tutorialnode.copinode.com?: " servername
 
-#Make the servername lowercase
-#servername=$(lowercase $servername)
 
-read -p "Exchanges may be provided with an API key.  Please enter it now, or leave it empty and press enter if you are not an exchange:" API_key
+
+
+read -p "What is your pool access key? Please enter or paste it in now:" PoolAccessKey
 
 # Ask for private key and seed if API key wasnt provided.
-if [[ $API_key == "" ]] || [ -z "$API_key" ];
+if [[ $PoolAccessKey == "" ]] || [ -z "$PoolAccessKey" ];
 then
 
 read -p "What is your wallet private key?: " pkey
@@ -186,9 +176,9 @@ exit 1
 fi
 
 
-if [[ $pkey == "" ]] || [[ $seed == "" ]] && [[ $API_key = "" ]];
+if [[ $PoolAccessKey = "" ]];
 then
-echo "Private Key or Seed Key was not provided. Please run again and provide answers to all of the questions"
+echo "Pool access key was not provided. Please run again and provide answers to all of the questions"
 exit 1
 fi
 
@@ -210,7 +200,7 @@ fi
 # Create keys , seeds and mnemonics
 ####################################
 
-if [[ $API_key != "" ]];
+if [[ $PoolAccessKey != "" ]];
 then
   # Its an exchange on mainnet.
   #sudo apt-get install unzip
@@ -231,39 +221,8 @@ mnemonic=$(cat "$keyspath" | jq -r '.[].Mnemonic')
 
 fi
 
-#echo "passed fi"
-
-#Lets pad the seeds
-
-function pad64chars(){
-x=$1
-while [ ${#x} -ne 64 ];
-do
-x="0"$x
-done
-echo "$x"
-}
-
-if [[ $API_key == "" ]];
-then
-
-  typeset -fx pad64chars
 
 
-  if [[ $seed != "" ]];
-  then
-    #Newly padded seed if needed
-    seed=$(pad64chars $seed)
-  fi
-
-  if [[ $pkey != "" ]];
-  then
-    #Newly padded private key if needed
-    pkey=$(pad64chars $pkey)
-
-  fi
-fi
-# padding of seeds and key complete
 
 
 exec 3<>/dev/tcp/ipv4.icanhazip.com/80
@@ -273,7 +232,8 @@ do
  [ "$i" ] && serverip="$i"
 done <&3
 
-serverurl=https://$servername
+serverurl=http://$servername:8001/
+healthurl=http://$servername:8001/health
 
 
 apt-get update -y && sudo apt-get upgrade -y
