@@ -139,9 +139,10 @@ do
  [ "$i" ] && serverip="$i"
 done <&3
 
-serverurl=http://$servername:8001/
-healthurl=http://$servername:8001/health
+serverurl=http://$servername:8001
+healthurl=$serverurl/health
 
+echo "Your health URL will be $healthurl"
 
 apt-get update -y && sudo apt-get upgrade -y
 
@@ -215,3 +216,4 @@ done
 
 
 
+echo "End of script.  Done"
