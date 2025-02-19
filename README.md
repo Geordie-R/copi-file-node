@@ -13,8 +13,8 @@ chmod +x installfilenode.sh
 
 # Uninstall File Node
 ```
-rm -rf uninstallfullnode.sh
-wget -O uninstallfullnode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfullnode.sh
-chmod +x uninstallfullnode.sh
-./uninstallfullnode.sh
+rm -rf uninstallfilenode.sh
+wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfilenode.sh
+chmod +x uninstallfilenode.sh
+./uninstallfilenode.sh
 ```
