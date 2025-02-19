@@ -204,7 +204,7 @@ while true; do
     STATUS=$(curl -s "$healthurl
 
     if [[ "$STATUS" == "Ok" ]]; then
-          echo "${GREEN}Node is healthy! You're done! Now why not download uptimerobot app and let it watch KEYWORD "Ok" at $healthurl so you can be notified when it is offline or failing."${COLOR_RESET}"
+          echo "${GREEN}Node is healthy! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
         break
 
     else
