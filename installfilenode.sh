@@ -139,7 +139,7 @@ do
  [ "$i" ] && serverip="$i"
 done <&3
 
-serverurl=http://$servername:8001
+serverurl=http://$serverip:8001
 healthurl=$serverurl/health
 
 echo "Your health URL will be $healthurl"
