@@ -1,13 +1,8 @@
-# THIS IS NOT WORKING ITS JUST A MESS OF CODE PUTTING STUFF TOGETHER
-
-
-
 #!/bin/bash
-
 logging=false
 
 
-#If you turn logging on, be aware your gcnode.log may contain your keys!!
+#If you turn logging on, be aware your filenode.log may contain your pool access key!
 
 set -eu -o pipefail # fail on error , debug all lines
 
@@ -22,27 +17,12 @@ exec 2>&1
 fi
 
 apt-get update -y && apt-get upgrade -y
-#Install JQ which makes it easy to interpret JSON
-apt-get update -y
-apt-get install -y jq
 
 # For output readability
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 COLOR_RESET=$(tput sgr0)
-
-
-function removequotes(){
-  #Remove the front and end double quote
-  version=${1#"\""}
-  version=${version%"\""}
-  echo "$version"
-}
-
-function lowercase(){
-  echo $1 | awk '{print tolower($0)}'
-}
 
 shopt -s globstar dotglob
 
@@ -178,19 +158,15 @@ ufw limit $portno
 ufw allow 8001/tcp
 ufw --force enable
 
-cd /home/$username/
-
-
 chown -R $username: /home/$username/$node_folder/
 cd /home/$username/$node_folder/
 
 
 logging_file_name="";
 
-if [[ $action == "testnet" ]];
+if [[ $action == "filenode" ]];
 then
 
-logging_file_name="FullNode1";
 cat <<EOF-SETUP >/home/$username/$node_folder/docker-compose.yml
 name: cornucopias
 services:
@@ -201,7 +177,7 @@ services:
         restart: unless-stopped # if you want to manually start the pool server replace “unless-stopped” with “no”
         environment:
             FILENODES_POOL_ACCESS_KEY: $PoolAccessKey
-            FILENODES_POOL_PUBLIC_PORT: $PoolPublicPort
+            FILENODES_POOL_PUBLIC_PORT: 8001
         volumes:
           - /home/$username/$node_folder/cache:/cache
 EOF-SETUP
@@ -216,3 +192,26 @@ chgrp $username /home/$username/$node_folder/docker-compose.yml
 read -n 1 -r -s -p $'Press enter to start the docker compose up -d in /home/$username/$node_folder/ ”...\n'
 cd /home/$username/$node_folder/
 docker compose up -d
+
+
+
+
+while true; do
+    STATUS=$(curl -s "$healthurl
+
+    if [[ "$STATUS" == "Ok" ]]; then
+          echo "${GREEN}Node is healthy! You're done! Now why not download uptimerobot app and let it watch KEYWORD "Ok" at $healthurl so you can be notified when it is offline or failing."${COLOR_RESET}"
+        break
+
+    else
+     echo "Waiting to check health in 5 seconds..."
+    fi
+
+    sleep 5  # Wait for 5 seconds before checking again
+done
+
+
+
+
+
+
