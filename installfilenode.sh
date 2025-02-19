@@ -160,6 +160,8 @@ ufw limit $portno
 ufw allow 8001/tcp
 ufw --force enable
 
+mkdir -p /home/$username/$node_folder/
+
 chown -R $username: /home/$username/$node_folder/
 cd /home/$username/$node_folder/
 
