@@ -7,7 +7,7 @@ logging=false
 set -eu -o pipefail # fail on error , debug all lines
 
 LOG_LOCATION=/root/
-node_folder="copi-node"
+
 
 if [[ $logging == true ]];
 then
@@ -63,6 +63,7 @@ do
     case $opt in
         "$filenode")
         action="filenode"
+        node_folder="filenode"
         echo "You chose a file node install"
         sleep 1
          break
