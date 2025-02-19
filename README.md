@@ -1,4 +1,4 @@
-# copi-file-node
+# Install File Node
 An easy to use installer for the copi file node to take the complexity out of deploying on Ubuntu using terminal.
 ```
 rm -rf installfilenode.sh
@@ -9,4 +9,12 @@ https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/READM
 
 chmod +x installfilenode.sh
 ./installfilenode.sh
+```
+
+# Uninstall File Node
+```
+rm -rf uninstallfullnode.sh
+wget -O uninstallfullnode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfullnode.sh
+chmod +x uninstallfullnode.sh
+./uninstallfullnode.sh
 ```
