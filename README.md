@@ -11,7 +11,7 @@ Cheers!
 # Install File Node
 ```
 rm -rf installfilenode.sh
-wget -O installfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/drafts-0.1/installfilenode.sh
+wget -O installfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/installfilenode.sh
 
 https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/README.md
 
