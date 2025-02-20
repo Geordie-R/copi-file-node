@@ -284,7 +284,8 @@ while true; do
     if (( $(echo "$progress >= 100" | bc -l) )); then
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [100%] Please wait... | Speed: ${speed_mb} MB/s"
     else
-        echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [$progress%] | Speed: ${speed_mb} MB/s"
+    
+        printf "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [%.2f%%] | Speed: %.2f MB/s\n" "$progress" "$speed_mb"
     fi
 
     # Store current values for next iteration
