@@ -290,19 +290,17 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
     previous_size_bytes=$total_size_bytes
     previous_time=$current_time
 
+    # Get health from check from afar
+    local URL="http://$serverip:8001/health"
+    healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$URL")
+  
 
-
- healthResponse=$(GetNodeHealth "$serverip")
+ 
 
     if [[ $healthResponse == "Ok" ]]; then
         echo "Node is OK!"
-        isOK="true" 
-                              
-break
-
-
-
-
+        isOK="true"
+        break
 
     else
       
