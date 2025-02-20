@@ -282,10 +282,6 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
 
 
 
-
-
-    
-
     # Store current values for next iteration
     previous_size_bytes=$total_size_bytes
     previous_time=$current_time
