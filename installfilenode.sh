@@ -291,8 +291,8 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
     previous_time=$current_time
 
     # Get health from check from afar
-    local URL="http://$serverip:8001/health"
-    healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$URL")
+ 
+    healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
   
 
  
