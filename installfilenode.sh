@@ -260,10 +260,7 @@ while true; do
         progress=100
     else
     
-        progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
-
-    echo "Total Size GB: $total_size_gb"
-    echo "Target Size GB: $TARGET_SIZE_GB"
+        progress=$(echo "scale=2; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
         
     fi
 
