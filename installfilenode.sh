@@ -281,7 +281,7 @@ while true; do
     fi
 
     # Display progress and speed
-    if [ "$progress" -ge 100 ]; then
+    if (( $(echo "$progress >= 100" | bc -l) )); then
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [100%] Please wait... | Speed: ${speed_mb} MB/s"
     else
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [$progress%] | Speed: ${speed_mb} MB/s"
