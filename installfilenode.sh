@@ -245,8 +245,6 @@ previous_size_bytes=0
 previous_time=$(date +%s)
 
 
-#!/bin/bash
-
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
