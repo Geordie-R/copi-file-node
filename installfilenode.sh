@@ -95,7 +95,7 @@ echo "✅ Your Ubuntu Username"
 echo "✅ Your Pool Access Key"
 
 
-
+echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
 
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
