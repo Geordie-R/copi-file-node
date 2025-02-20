@@ -1,4 +1,4 @@
-#!/bin/bash
+o#!/bin/bash
 logging=false
 
 
@@ -259,7 +259,12 @@ while true; do
     if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
         progress=100
     else
+    
         progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
+
+    echo "Total Size GB: $total_size_gb"
+    echo "Target Size GB: $TARGET_SIZE_GB"
+        
     fi
 
     # Check if the total size has reached the target
