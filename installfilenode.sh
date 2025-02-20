@@ -264,9 +264,8 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
 
     if [[ $healthResponse == "Ok" ]]; then
         echo "Node is OK!"
-        isOK="true"  # Set OK to "true" if node is OK
-
-
+        isOK="true" 
+shopt -s globstar dotglob
          cat << "OKEOF"                              
                                        
      OOOOOOOOO     KKKKKKKKK    KKKKKKK
