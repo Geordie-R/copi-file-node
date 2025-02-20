@@ -245,17 +245,13 @@ previous_size_bytes=0
 previous_time=$(date +%s)
 
 
-
-
-
-
 #!/bin/bash
 
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
 
-while (( $(echo "$total_size_gb <= $TARGET_SIZE_GB" | bc -l) )); do
+while true; do
     current_time=$(date +%s)
     file_count=$(find cache -type f | wc -l)
     total_size_bytes=$(du -sb cache | awk '{print $1}')
@@ -266,6 +262,12 @@ while (( $(echo "$total_size_gb <= $TARGET_SIZE_GB" | bc -l) )); do
         progress=100
     else
         progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
+    fi
+
+    # Check if the total size has reached the target
+    if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
+        echo "✅ Target size reached: $total_size_gb GB. Exiting loop."
+        break  # Exit the loop if the size is reached
     fi
 
     # Calculate download speed (MB/s)
@@ -291,6 +293,8 @@ while (( $(echo "$total_size_gb <= $TARGET_SIZE_GB" | bc -l) )); do
 
     sleep 15
 done
+
+
 
 echo "✅ Target size reached. Exiting loop!"
 
