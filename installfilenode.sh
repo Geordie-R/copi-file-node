@@ -260,7 +260,7 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
 
 
 
- healthResponse=$(GetNodeHealth "$IP")
+ healthResponse=$(GetNodeHealth "$serverip")
 
     if [[ $healthResponse == "Ok" ]]; then
         echo "Node is OK!"
