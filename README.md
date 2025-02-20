@@ -23,7 +23,7 @@ chmod +x installfilenode.sh
 # Uninstall File Node
 ```
 rm -rf uninstallfilenode.sh
-wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/drafts-0.1/uninstallfilenode.sh
+wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfilenode.sh
 
 chmod +x uninstallfilenode.sh
 ./uninstallfilenode.sh
