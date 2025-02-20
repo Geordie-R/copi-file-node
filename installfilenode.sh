@@ -265,27 +265,7 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
     if [[ $healthResponse == "Ok" ]]; then
         echo "Node is OK!"
         isOK="true" 
-shopt -s globstar dotglob
-         cat << "OKEOF"                              
-                                       
-     OOOOOOOOO     KKKKKKKKK    KKKKKKK
-   OO:::::::::OO   K:::::::K    K:::::K
- OO:::::::::::::OO K:::::::K    K:::::K
-O:::::::OOO:::::::OK:::::::K   K::::::K
-O::::::O   O::::::OKK::::::K  K:::::KKK
-O:::::O     O:::::O  K:::::K K:::::K   
-O:::::O     O:::::O  K::::::K:::::K    
-O:::::O     O:::::O  K:::::::::::K     
-O:::::O     O:::::O  K:::::::::::K     
-O:::::O     O:::::O  K::::::K:::::K    
-O:::::O     O:::::O  K:::::K K:::::K   
-O::::::O   O::::::OKK::::::K  K:::::KKK
-O:::::::OOO:::::::OK:::::::K   K::::::K
- OO:::::::::::::OO K:::::::K    K:::::K
-   OO:::::::::OO   K:::::::K    K:::::K
-     OOOOOOOOO     KKKKKKKKK    KKKKKKK
-                                       
-    OKEOF                                   
+                              
 break
 
 
