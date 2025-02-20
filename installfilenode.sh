@@ -208,10 +208,8 @@ chgrp $username /home/$username/$node_folder/docker-compose.yml
 read -n 1 -r -s -p $'Press enter to start the docker compose up -d in /home/$username/$node_folder/ ”...\n'
 cd /home/$username/$node_folder/
 docker compose up -d
-
-
-#!/bin/bash
-
+echo "Please be patient..."
+sleep 15
 TARGET_SIZE_GB=35  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
