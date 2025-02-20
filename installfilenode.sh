@@ -133,15 +133,24 @@ fi
 
 
 # Get Server IP
-exec 3<>/dev/tcp/ipv4.icanhazip.com/80
-echo -e 'GET / HTTP/1.0\r\nhost: ipv4.icanhazip.com\r\n\r' >&3
-while read i
-do
- [ "$i" ] && serverip="$i"
-done <&3
+
+function GetServerIP() {
+    exec 3<>/dev/tcp/ipv4.icanhazip.com/80
+    echo -e 'GET / HTTP/1.0\r\nhost: ipv4.icanhazip.com\r\n\r' >&3
+
+    local serverip=""
+    while read -r i; do
+        [ "$i" ] && serverip="$i"
+    done <&3
+
+    echo "$serverip"
+}
+
+serverip=$(GetServerIP)
 
 serverurl=http://$serverip:8001
 healthurl=$serverurl/health
+
 
 echo "Your health URL will be $healthurl"
 
@@ -161,6 +170,9 @@ ufw allow 8001/tcp
 ufw --force enable
 
 mkdir -p /home/$username/$node_folder/
+
+cacheurl="/home/$username/$node_folder/cache"
+
 
 chown -R $username: /home/$username/$node_folder/
 cd /home/$username/$node_folder/
@@ -183,7 +195,7 @@ services:
             FILENODES_POOL_ACCESS_KEY: $PoolAccessKey
             FILENODES_POOL_PUBLIC_PORT: 8001
         volumes:
-          - /home/$username/$node_folder/cache:/cache
+          - $cacheurl:/cache
 EOF-SETUP
 
 fi
@@ -196,6 +208,107 @@ chgrp $username /home/$username/$node_folder/docker-compose.yml
 read -n 1 -r -s -p $'Press enter to start the docker compose up -d in /home/$username/$node_folder/ ”...\n'
 cd /home/$username/$node_folder/
 docker compose up -d
+
+
+#!/bin/bash
+
+TARGET_SIZE_GB=35  # Hardcoded last known size
+previous_size_bytes=0
+previous_time=$(date +%s)
+
+while true; do
+    current_time=$(date +%s)
+    file_count=$(find cache -type f | wc -l)
+    total_size_bytes=$(du -sb cache | awk '{print $1}')
+    total_size_gb=$(echo "scale=2; $total_size_bytes / 1024 / 1024 / 1024" | bc)
+
+    # Calculate progress percentage
+    if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
+        progress=100
+    else
+        progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
+    fi
+
+    # Calculate download speed (MB/s)
+    size_difference=$((total_size_bytes - previous_size_bytes))
+    time_difference=$((current_time - previous_time))
+
+    if [ "$time_difference" -gt 0 ]; then
+        speed_mb=$(echo "scale=2; $size_difference / 1024 / 1024 / $time_difference" | bc)
+    else
+        speed_mb=0
+    fi
+
+    # Display progress and speed
+    if [ "$progress" -ge 100 ]; then
+        echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [100%] Please wait... | Speed: ${speed_mb} MB/s"
+    else
+        echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [$progress%] | Speed: ${speed_mb} MB/s"
+    fi
+
+    # Store current values for next iteration
+    previous_size_bytes=$total_size_bytes
+    previous_time=$current_time
+
+    sleep 5
+done
+
+
+
+
+
+GetNodeHealth() {
+    local serverIP="$1"
+    local URL="http://$serverIP:8001/health"
+    response=$(curl -s --interface "$(curl -s ifconfig.me)" "$URL")
+    echo $response
+}
+
+
+
+max_retries=30
+count=0
+
+#while [ "$count" -lt "$max_retries" ]; do
+while [ "$count" -lt "$max_retries" ] && [ "$isOK" == "false" ]; do
+
+    healthResponse=$(GetNodeHealth "$IP")
+
+
+    if [[ $healthResponse == "Ok" ]]; then
+        echo "Node is OK!"
+        isOK="true"  # Set OK to "true" if node is OK
+
+    else
+        echo "Checking $IP....Node is showing:$healthResponse"
+        isOK="false"
+    fi
+
+    ((count++))
+    echo "OK is $isOK .... Attempt $count of $max_retries"
+    sleep 5  # Wait 30 seconds before retrying
+done
+
+
+echo "Script Completed"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
