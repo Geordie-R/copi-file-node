@@ -266,7 +266,7 @@ while true; do
 
     # Check if the total size has reached the target
     if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
-        echo "✅ Target size reached: $total_size_gb GB. Exiting loop."
+        echo "✅ Target size reached: $total_size_gb GB."
         break  # Exit the loop if the size is reached
     fi
 
@@ -297,9 +297,6 @@ done
 
 
 
-echo "✅ Target size reached. Exiting loop!"
-
-
 
 
 
@@ -318,7 +315,6 @@ healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
 if [[ $healthResponse == "Ok" ]]; then
    echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
    isOK="true"
-   break
 else
    echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
    isOK="false"
