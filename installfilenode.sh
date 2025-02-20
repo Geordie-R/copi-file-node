@@ -210,11 +210,11 @@ cd /home/$username/$node_folder/
 docker compose up -d
 echo "Please be patient..."
 sleep 15
-TARGET_SIZE_GB=35  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
 
 while true; do
+TARGET_SIZE_GB=34.27  # Hardcoded last known size
     current_time=$(date +%s)
     file_count=$(find cache -type f | wc -l)
     total_size_bytes=$(du -sb cache | awk '{print $1}')
@@ -244,11 +244,39 @@ while true; do
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [$progress%] | Speed: ${speed_mb} MB/s"
     fi
 
+
+
+        progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
+
+
+
+
+
+    
+
     # Store current values for next iteration
     previous_size_bytes=$total_size_bytes
     previous_time=$current_time
 
-    sleep 5
+
+
+ healthResponse=$(GetNodeHealth "$IP")
+
+    if [[ $healthResponse == "Ok" ]]; then
+        echo "Node is OK!"
+        isOK="true"  # Set OK to "true" if node is OK
+
+    else
+      
+         echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
+        isOK="false"
+    fi
+
+
+
+
+
+    sleep 10
 done
 
 
