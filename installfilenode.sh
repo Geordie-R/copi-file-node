@@ -298,12 +298,11 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
  
 
     if [[ $healthResponse == "Ok" ]]; then
-        echo "Node is OK!"
+         echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
         isOK="true"
         break
 
     else
-      
          echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
         isOK="false"
     fi
@@ -312,86 +311,7 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
 
 
 
-    sleep 10
+    sleep 15
 done
-
-
-
-
-
-GetNodeHealth() {
-    local serverIP="$1"
-    local URL="http://$serverIP:8001/health"
-    response=$(curl -s --interface "$(curl -s ifconfig.me)" "$URL")
-    echo $response
-}
-
-
-
-max_retries=30
-count=0
-
-#while [ "$count" -lt "$max_retries" ]; do
-while [ "$count" -lt "$max_retries" ] && [ "$isOK" == "false" ]; do
-
-    healthResponse=$(GetNodeHealth "$IP")
-
-
-    if [[ $healthResponse == "Ok" ]]; then
-        echo "Node is OK!"
-        isOK="true"  # Set OK to "true" if node is OK
-
-    else
-        echo "Checking $IP....Node is showing:$healthResponse"
-        isOK="false"
-    fi
-
-    ((count++))
-    echo "OK is $isOK .... Attempt $count of $max_retries"
-    sleep 5  # Wait 30 seconds before retrying
-done
-
-
-echo "Script Completed"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-while true; do
-    STATUS=$(curl -s "$healthurl
-
-    if [[ "$STATUS" == "Ok" ]]; then
-          echo "${GREEN}Node is healthy! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
-        break
-
-    else
-     echo "Waiting to check health in 5 seconds..."
-    fi
-
-    sleep 5  # Wait for 5 seconds before checking again
-done
-
-
-
-
-
 
 echo "End of script.  Done"
