@@ -245,8 +245,18 @@ sleep 15
 previous_size_bytes=0
 previous_time=$(date +%s)
 
-while true; do
+
+
+
+
+
+#!/bin/bash
+
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
+previous_size_bytes=0
+previous_time=$(date +%s)
+
+while (( $(echo "$total_size_gb <= $TARGET_SIZE_GB" | bc -l) )); do
     current_time=$(date +%s)
     file_count=$(find cache -type f | wc -l)
     total_size_bytes=$(du -sb cache | awk '{print $1}')
@@ -276,38 +286,39 @@ TARGET_SIZE_GB=34.27  # Hardcoded last known size
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [$progress%] | Speed: ${speed_mb} MB/s"
     fi
 
-
-
-        progress=$(echo "scale=0; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
-
-
-
     # Store current values for next iteration
     previous_size_bytes=$total_size_bytes
     previous_time=$current_time
 
-    # Get health from check from afar
- 
-    healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
-  
-
- 
-
-    if [[ $healthResponse == "Ok" ]]; then
-         echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
-        isOK="true"
-        break
-
-    else
-         echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
-        isOK="false"
-    fi
-
-
-
-
-
     sleep 15
 done
+
+echo "✅ Target size reached. Exiting loop!"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Get health from check from afar
+healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
+
+if [[ $healthResponse == "Ok" ]]; then
+   echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
+   isOK="true"
+   break
+else
+   echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
+   isOK="false"
+fi
+
 
 echo "End of script.  Done"
