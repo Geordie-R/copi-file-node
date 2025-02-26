@@ -91,7 +91,7 @@ done
 
 echo "Welcome to the COPI File Node Installer . We will begin to ask you a series of questions.  Please have to hand:"
 echo "✅ Your SSH Port No (likely to be 22 if you are not sure)"
-echo "✅ Your Ubuntu Username"
+echo "✅ Your Ubuntu Username. Leave empty to use current user"
 echo "✅ Your Pool Access Key From Your Copi Account Online"
 echo "✅ Your WAN side Pool Port No If Changing From 8001"
 echo "✅ Your LAN side Port No If Changing From 8001"
@@ -102,7 +102,7 @@ echo "💡 Note: If you need to copy and paste into terminal, you can paste by C
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
 read -p "What is your ssh port number (Leave empty or put 22 to use the standard ssh port 22)?: " portno
-read -p "What is your ubuntu username (use copi if unsure as it will be created fresh. Do not use root) ?: " username
+read -p "What is your ubuntu username (Leave it empty to just use $USER. Any typed username will be created if it does not exist) ?: " username
 read -p "What is your pool access key? Please enter or paste it in now:" PoolAccessKey
 read -p "What is WAN/Internet side pool pool port no? (likely 8001 if you do not know):" PoolPortNo
 read -p "What is your LAN/Internal network side pool pool port no? (likely 8001 if you do not know):" LANPortNo
@@ -116,7 +116,7 @@ fi
 
 if [[ $username == "" ]] || [ -z "$username" ];
 then
-username = "copi"
+username = $USER
 fi
 
 if [[ $PoolPortNo == "" ]] || [ -z "$PoolPortNo" ];
