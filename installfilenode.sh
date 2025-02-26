@@ -90,30 +90,48 @@ done
 
 
 echo "Welcome to the COPI File Node Installer . We will begin to ask you a series of questions.  Please have to hand:"
-echo "✅ Your SSH Port No"
+echo "✅ Your SSH Port No (likely to be 22 if you are not sure)"
 echo "✅ Your Ubuntu Username"
-echo "✅ Your Pool Access Key"
+echo "✅ Your Pool Access Key From Your Copi Account Online"
+echo "✅ Your WAN side Pool Port No If Changing From 8001"
+echo "✅ Your LAN side Port No If Changing From 8001"
 
 
 echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
 
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
-read -p "What is your ssh port number (likely 22 if you do not know)?: " portno
+read -p "What is your ssh port number (Leave empty or put 22 to use the standard ssh port 22)?: " portno
 read -p "What is your ubuntu username (use copi if unsure as it will be created fresh. Do not use root) ?: " username
 read -p "What is your pool access key? Please enter or paste it in now:" PoolAccessKey
+read -p "What is WAN/Internet side pool pool port no? (likely 8001 if you do not know):" PoolPortNo
+read -p "What is your LAN/Internal network side pool pool port no? (likely 8001 if you do not know):" LANPortNo
 
-
-if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]];
+### SET DEFAULTS FOR EMPTY FIELDS
+if [[ $portno == "" ]] || [ -z "$portno" ];
 then
-echo "${RED}Some details were not provided.  Script is now exiting.  Please run again and provide answers to all of the questions${COLOR_RESET}"
-exit 1
+portno = "22"
 fi
 
 
-if [[ $PoolAccessKey = "" ]];
+if [[ $username == "" ]] || [ -z "$username" ];
 then
-echo "Pool access key was not provided. Please run again and provide answers to all of the questions"
+username = "copi"
+fi
+
+if [[ $PoolPortNo == "" ]] || [ -z "$PoolPortNo" ];
+then
+PoolPortNo = "8001"
+fi
+
+if [[ $LANPortNo == "" ]] || [ -z "$LANPortNo" ];
+then
+LANPortNo = "8001"
+fi
+
+if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]] || [[ $PoolPortNo == "" ]];
+then
+echo "${RED}Some details were not provided.  Script is now exiting.  Please run again and provide answers to all of the questions${COLOR_RESET}"
 exit 1
 fi
 
@@ -148,7 +166,7 @@ function GetServerIP() {
 
 serverip=$(GetServerIP)
 
-serverurl=http://$serverip:8001
+serverurl=http://$serverip:$PoolPortNo
 healthurl=$serverurl/health
 
 
@@ -166,7 +184,7 @@ echo "Ubuntu version $ubuntuvers detected"
 
 
 ufw limit $portno
-ufw allow 8001/tcp
+ufw allow $PoolPortNo/tcp
 ufw --force enable
 
 mkdir -p /home/$username/$node_folder/
@@ -189,11 +207,11 @@ services:
     pool-server:
         image: public.ecr.aws/cornucopias/nodes/pool-server:latest
         ports:
-          - "8001:8001"
+          - "$LANPortNo:8001"
         restart: unless-stopped # if you want to manually start the pool server replace “unless-stopped” with “no”
         environment:
             FILENODES_POOL_ACCESS_KEY: $PoolAccessKey
-            FILENODES_POOL_PUBLIC_PORT: 8001
+            FILENODES_POOL_PUBLIC_PORT: $PoolPortNo
         volumes:
           - $cacheurl:/cache
 EOF-SETUP
@@ -248,6 +266,8 @@ previous_time=$(date +%s)
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
+
+# This is quite a poor way of monitoring the progress, we will read the docker logs for the next version.
 
 while true; do
     current_time=$(date +%s)
