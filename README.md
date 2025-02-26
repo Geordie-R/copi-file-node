@@ -11,7 +11,8 @@ Cheers!
 # Install File Node
 ```
 rm -rf installfilenode.sh
-wget -O installfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/installfilenode.sh
+# wget -O installfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/installfilenode.sh
+wget -O installfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/BespokePortNo/installfilenode.sh
 chmod +x installfilenode.sh
 ./installfilenode.sh
 ```
@@ -19,8 +20,8 @@ chmod +x installfilenode.sh
 # Uninstall File Node
 ```
 rm -rf uninstallfilenode.sh
-wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfilenode.sh
-
+wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/BespokePortNo/uninstallfilenode.sh
+#wget -O uninstallfilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/uninstallfilenode.sh
 chmod +x uninstallfilenode.sh
 ./uninstallfilenode.sh
 ```
