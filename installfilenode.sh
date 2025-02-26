@@ -149,6 +149,8 @@ else
 
 fi
 
+user_home=$(eval echo "~$username")
+
 
 # Get Server IP
 
@@ -187,13 +189,13 @@ ufw limit $portno
 ufw allow $PoolPortNo/tcp
 ufw --force enable
 
-mkdir -p /home/$username/$node_folder/
+mkdir -p $user_home/$node_folder/
 
-cacheurl="/home/$username/$node_folder/cache"
+cacheurl="$user_home/$node_folder/cache"
 
 
-chown -R $username: /home/$username/$node_folder/
-cd /home/$username/$node_folder/
+chown -R $username: $user_home/$node_folder/
+cd $user_home/$node_folder/
 
 
 logging_file_name="";
@@ -201,7 +203,7 @@ logging_file_name="";
 if [[ $action == "filenode" ]];
 then
 
-cat <<EOF-SETUP >/home/$username/$node_folder/docker-compose.yml
+cat <<EOF-SETUP >$user_home/$node_folder/docker-compose.yml
 name: cornucopias
 services:
     pool-server:
@@ -220,8 +222,8 @@ fi
 
 
 echo "Applying chgrp and chown to docker compose"
-chown $username /home/$username/$node_folder/docker-compose.yml
-chgrp $username /home/$username/$node_folder/docker-compose.yml
+chown $username $user_home/$node_folder/docker-compose.yml
+chgrp $username $user_home/$node_folder/docker-compose.yml
 
 
 
@@ -255,7 +257,7 @@ DOCKEREOF
 
 
 read -n 1 -r -s -p $'Press enter to launch docker compose up -d”...\n'
-cd /home/$username/$node_folder/
+cd $user_home/$node_folder/
 docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
