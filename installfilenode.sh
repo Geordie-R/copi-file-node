@@ -110,23 +110,23 @@ read -p "What is your LAN/Internal network side pool pool port no? (likely 8001 
 ### SET DEFAULTS FOR EMPTY FIELDS
 if [[ $portno == "" ]] || [ -z "$portno" ];
 then
-portno = "22"
+portno="22"
 fi
 
 
 if [[ $username == "" ]] || [ -z "$username" ];
 then
-username = $USER
+username=$USER
 fi
 
 if [[ $PoolPortNo == "" ]] || [ -z "$PoolPortNo" ];
 then
-PoolPortNo = "8001"
+PoolPortNo="8001"
 fi
 
 if [[ $LANPortNo == "" ]] || [ -z "$LANPortNo" ];
 then
-LANPortNo = "8001"
+LANPortNo="8001"
 fi
 
 if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]] || [[ $PoolPortNo == "" ]];
@@ -229,7 +229,6 @@ chgrp $username $user_home/$node_folder/docker-compose.yml
 
 
 cat << "DOCKEREOF"
- 
 ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗          
 ██║     ██╔══██╗██║   ██║████╗  ██║██╔════╝██║  ██║██║████╗  ██║██╔════╝          
 ██║     ███████║██║   ██║██╔██╗ ██║██║     ███████║██║██╔██╗ ██║██║  ███╗         
