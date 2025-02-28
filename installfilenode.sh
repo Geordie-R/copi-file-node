@@ -91,6 +91,8 @@ echo "✅ Your Ubuntu Username. Leave empty to use current user"
 echo "✅ Your Pool Access Key From Your Copi Account Online"
 echo "✅ Your WAN side Pool Port No If Changing From 8001"
 echo "✅ Your LAN side Port No If Changing From 8001"
+echo "✅ Think of a name to call your Docker container or leave it empty for "COPINode1"
+
 
 
 echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
@@ -102,28 +104,35 @@ read -p "What is your ubuntu username (Leave it empty to just use $USER. Any typ
 read -p "What is your pool access key? Please enter or paste it in now from your COPI account:" PoolAccessKey
 read -p "What is WAN/Internet side pool pool port no? (Leave it empty to accept 8001 if you do not know):" PoolPortNo
 read -p "What is your LAN/Internal network side pool pool port no? (Leave it empty to accept 8001 if you do not know):" LANPortNo
+read -p "What do you wish to call your docker container? This is useful when you want to refer to it for commands in future.  (Leave it empty and we will call it COPINode1):" ContainerName
 
 ### SET DEFAULTS FOR EMPTY FIELDS
 if [[ $portno == "" ]] || [ -z "$portno" ];
 then
-portno="22"
+  portno="22"
 fi
 
 
 if [[ $username == "" ]] || [ -z "$username" ];
 then
-username=$USER
+  username=$USER
 fi
 
 if [[ $PoolPortNo == "" ]] || [ -z "$PoolPortNo" ];
 then
-PoolPortNo="8001"
+  PoolPortNo="8001"
 fi
 
 if [[ $LANPortNo == "" ]] || [ -z "$LANPortNo" ];
 then
-LANPortNo="8001"
+  LANPortNo="8001"
 fi
+
+if [[ $ContainerName == "" ]] || [ -z "$ContainerName" ];
+then
+  ContainerName="COPINode1"
+fi
+
 
 if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]] || [[ $PoolPortNo == "" ]];
 then
@@ -176,9 +185,28 @@ echo "Installing prereqs..."
 apt-get update -y && sudo apt-get upgrade -y
 #sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+#Installing Docker if not found
+if ! command -v docker &> /dev/null
+then
+    echo "Docker not found, installing..."
+    curl -fsSL https://get.docker.com | bash
+else
+    echo "Docker is already installed."
+fi
+
+
 #Installing Docker Compose
-curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
-echo "If docker-compose successfully installed we should get the version on the next line"
+
+if ! command -v docker-compose &> /dev/null
+then
+    echo "Docker Compose not found, installing..."
+    curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+else
+    echo "Docker Compose is already installed."
+fi
+
+
+
 docker-compose --version
 ubuntuvers=$(lsb_release -rs)
 echo "Ubuntu version $ubuntuvers detected"
@@ -207,6 +235,7 @@ name: cornucopias
 services:
     pool-server:
         image: public.ecr.aws/cornucopias/nodes/pool-server:latest
+        container_name: $ContainerName
         ports:
           - "$LANPortNo:8001"
         restart: unless-stopped # if you want to manually start the pool server replace “unless-stopped” with “no”
@@ -317,18 +346,6 @@ done
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 # Get health from check from afar
 healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
 
@@ -339,6 +356,5 @@ else
    echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
    isOK="false"
 fi
-
 
 echo "End of script.  Done"
