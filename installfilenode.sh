@@ -1,13 +1,9 @@
-o#!/bin/bash
+#!/bin/bash
 logging=false
 
-
 #If you turn logging on, be aware your filenode.log may contain your pool access key!
-
 set -eu -o pipefail # fail on error , debug all lines
-
 LOG_LOCATION=/root/
-
 
 if [[ $logging == true ]];
 then
@@ -103,9 +99,9 @@ read -n 1 -r -s -p $'Press enter to begin...\n'
 
 read -p "What is your ssh port number (Leave empty or put 22 to use the standard ssh port 22)?: " portno
 read -p "What is your ubuntu username (Leave it empty to just use $USER. Any typed username will be created if it does not exist) ?: " username
-read -p "What is your pool access key? Please enter or paste it in now:" PoolAccessKey
-read -p "What is WAN/Internet side pool pool port no? (likely 8001 if you do not know):" PoolPortNo
-read -p "What is your LAN/Internal network side pool pool port no? (likely 8001 if you do not know):" LANPortNo
+read -p "What is your pool access key? Please enter or paste it in now from your COPI account:" PoolAccessKey
+read -p "What is WAN/Internet side pool pool port no? (Leave it empty to accept 8001 if you do not know):" PoolPortNo
+read -p "What is your LAN/Internal network side pool pool port no? (Leave it empty to accept 8001 if you do not know):" LANPortNo
 
 ### SET DEFAULTS FOR EMPTY FIELDS
 if [[ $portno == "" ]] || [ -z "$portno" ];
@@ -178,9 +174,12 @@ apt-get update -y && sudo apt-get upgrade -y
 
 echo "Installing prereqs..."
 apt-get update -y && sudo apt-get upgrade -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+#sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-
+#Installing Docker Compose
+curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+echo "If docker-compose successfully installed we should get the version on the next line"
+docker-compose --version
 ubuntuvers=$(lsb_release -rs)
 echo "Ubuntu version $ubuntuvers detected"
 
