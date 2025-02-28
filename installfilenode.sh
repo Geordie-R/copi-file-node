@@ -91,7 +91,7 @@ echo "✅ Your Ubuntu Username. Leave empty to use current user"
 echo "✅ Your Pool Access Key From Your Copi Account Online"
 echo "✅ Your WAN side Pool Port No If Changing From 8001"
 echo "✅ Your LAN side Port No If Changing From 8001"
-echo "✅ Think of a name to call your Docker container or leave it empty for "COPINode1"
+echo "✅ Think of a name to call your Docker container or leave it empty for COPINode1"
 
 
 
