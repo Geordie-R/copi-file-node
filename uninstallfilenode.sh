@@ -12,7 +12,7 @@ fi
 
 user_home=$(eval echo "~$username")
 
-read -p "What is your container name? (it's likely to be COPINode1 if you accepted defaults on the install) ?: " ContainerName
+read -p "What is your container name? (Leave empty for COPINode1) ?: " ContainerName
 
 if [[ $ContainerName == "" ]] || [ -z "$ContainerName" ];
 then
