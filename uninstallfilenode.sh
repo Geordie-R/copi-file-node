@@ -3,22 +3,34 @@
 # This will uninstall the filenode so that you can run the install again.
 # Note this will remove the directory at /home/<yourusername>/filenode
 
-read -p "What is your ubuntu username (its likely to be copi if you followed the default suggestion on the install) ?: " username
-echo "Removing docker image that contains pool-server..."
-# Get Container ID
-container_id=$(docker ps | grep "pool-server" | awk '{print $1}')
+read -p "What is your ubuntu username (Leave it empty to just use $USER) ?: " username
 
-if [ -n "$container_id" ]; then
-    echo "Stopping container: $container_id"
-    docker stop "$container_id"
-    
-    echo "Removing container: $container_id"
-    docker rm "$container_id"
-else
-    echo "No running container found for pool-server."
+if [[ $username == "" ]] || [ -z "$username" ];
+then
+  username=$USER
+fi
+
+user_home=$(eval echo "~$username")
+
+read -p "What is your container name? (Leave empty for COPINode1) ?: " ContainerName
+
+if [[ $ContainerName == "" ]] || [ -z "$ContainerName" ];
+then
+  ContainerName="COPINode1"
 fi
 
 
-echo "Removing /home/$username/filenode"
-rm -R /home/$username/filenode 2> /dev/null
+echo "Removing docker image that contains pool-server..."
+# Get Container ID
 
+# Check if the container exists
+if docker ps -a --format '{{.Names}}' | grep -w "$ContainerName" &> /dev/null; then
+    echo "Container $ContainerName found. Removing it..."
+    docker rm -f "$ContainerName"
+else
+    echo "Container $ContainerName not found."
+fi
+
+echo "Removing $user_home/filenode"
+rm -R $user_home/filenode 2> /dev/null
+echo "Script Complete"

@@ -1,13 +1,9 @@
-o#!/bin/bash
+#!/bin/bash
 logging=false
 
-
 #If you turn logging on, be aware your filenode.log may contain your pool access key!
-
 set -eu -o pipefail # fail on error , debug all lines
-
 LOG_LOCATION=/root/
-
 
 if [[ $logging == true ]];
 then
@@ -90,30 +86,57 @@ done
 
 
 echo "Welcome to the COPI File Node Installer . We will begin to ask you a series of questions.  Please have to hand:"
-echo "✅ Your SSH Port No"
-echo "✅ Your Ubuntu Username"
-echo "✅ Your Pool Access Key"
+echo "✅ Your SSH Port No (likely to be 22 if you are not sure)"
+echo "✅ Your Ubuntu Username. Leave empty to use current user"
+echo "✅ Your Pool Access Key From Your Copi Account Online"
+echo "✅ Your WAN side Pool Port No If Changing From 8001"
+echo "✅ Your LAN side Port No If Changing From 8001"
+echo "✅ Think of a name to call your Docker container or leave it empty for COPINode1"
+
 
 
 echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
 
 read -n 1 -r -s -p $'Press enter to begin...\n'
 
-read -p "What is your ssh port number (likely 22 if you do not know)?: " portno
-read -p "What is your ubuntu username (use copi if unsure as it will be created fresh. Do not use root) ?: " username
-read -p "What is your pool access key? Please enter or paste it in now:" PoolAccessKey
+read -p "What is your ssh port number (Leave empty or put 22 to use the standard ssh port 22)?: " portno
+read -p "What is your ubuntu username (Leave it empty to just use $USER. Any typed username will be created if it does not exist) ?: " username
+read -p "What is your pool access key? Please enter or paste it in now from your COPI account:" PoolAccessKey
+read -p "What is WAN/Internet side pool pool port no? (Leave it empty to accept 8001 if you do not know):" PoolPortNo
+read -p "What is your LAN/Internal network side pool pool port no? (Leave it empty to accept 8001 if you do not know):" LANPortNo
+read -p "What do you wish to call your docker container? This is useful when you want to refer to it for commands in future.  (Leave it empty and we will call it COPINode1):" ContainerName
 
-
-if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]];
+### SET DEFAULTS FOR EMPTY FIELDS
+if [[ $portno == "" ]] || [ -z "$portno" ];
 then
-echo "${RED}Some details were not provided.  Script is now exiting.  Please run again and provide answers to all of the questions${COLOR_RESET}"
-exit 1
+  portno="22"
 fi
 
 
-if [[ $PoolAccessKey = "" ]];
+if [[ $username == "" ]] || [ -z "$username" ];
 then
-echo "Pool access key was not provided. Please run again and provide answers to all of the questions"
+  username=$USER
+fi
+
+if [[ $PoolPortNo == "" ]] || [ -z "$PoolPortNo" ];
+then
+  PoolPortNo="8001"
+fi
+
+if [[ $LANPortNo == "" ]] || [ -z "$LANPortNo" ];
+then
+  LANPortNo="8001"
+fi
+
+if [[ $ContainerName == "" ]] || [ -z "$ContainerName" ];
+then
+  ContainerName="COPINode1"
+fi
+
+
+if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]] || [[ $PoolPortNo == "" ]];
+then
+echo "${RED}Some details were not provided.  Script is now exiting.  Please run again and provide answers to all of the questions${COLOR_RESET}"
 exit 1
 fi
 
@@ -130,6 +153,8 @@ else
         adduser $username sudo
 
 fi
+
+user_home=$(eval echo "~$username")
 
 
 # Get Server IP
@@ -148,7 +173,7 @@ function GetServerIP() {
 
 serverip=$(GetServerIP)
 
-serverurl=http://$serverip:8001
+serverurl=http://$serverip:$PoolPortNo
 healthurl=$serverurl/health
 
 
@@ -158,24 +183,46 @@ apt-get update -y && sudo apt-get upgrade -y
 
 echo "Installing prereqs..."
 apt-get update -y && sudo apt-get upgrade -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+#sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+#Installing Docker if not found
+if ! command -v docker &> /dev/null
+then
+    echo "Docker not found, installing..."
+    curl -fsSL https://get.docker.com | bash
+else
+    echo "Docker is already installed."
+fi
 
 
+#Installing Docker Compose
+
+if ! command -v docker-compose &> /dev/null
+then
+    echo "Docker Compose not found, installing..."
+    curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+else
+    echo "Docker Compose is already installed."
+fi
+
+
+
+docker-compose --version
 ubuntuvers=$(lsb_release -rs)
 echo "Ubuntu version $ubuntuvers detected"
 
 
 ufw limit $portno
-ufw allow 8001/tcp
+ufw allow $PoolPortNo/tcp
 ufw --force enable
 
-mkdir -p /home/$username/$node_folder/
+mkdir -p $user_home/$node_folder/
 
-cacheurl="/home/$username/$node_folder/cache"
+cacheurl="$user_home/$node_folder/cache"
 
 
-chown -R $username: /home/$username/$node_folder/
-cd /home/$username/$node_folder/
+chown -R $username: $user_home/$node_folder/
+cd $user_home/$node_folder/
 
 
 logging_file_name="";
@@ -183,17 +230,18 @@ logging_file_name="";
 if [[ $action == "filenode" ]];
 then
 
-cat <<EOF-SETUP >/home/$username/$node_folder/docker-compose.yml
+cat <<EOF-SETUP >$user_home/$node_folder/docker-compose.yml
 name: cornucopias
 services:
     pool-server:
         image: public.ecr.aws/cornucopias/nodes/pool-server:latest
+        container_name: $ContainerName
         ports:
-          - "8001:8001"
+          - "$LANPortNo:8001"
         restart: unless-stopped # if you want to manually start the pool server replace “unless-stopped” with “no”
         environment:
             FILENODES_POOL_ACCESS_KEY: $PoolAccessKey
-            FILENODES_POOL_PUBLIC_PORT: 8001
+            FILENODES_POOL_PUBLIC_PORT: $PoolPortNo
         volumes:
           - $cacheurl:/cache
 EOF-SETUP
@@ -202,14 +250,13 @@ fi
 
 
 echo "Applying chgrp and chown to docker compose"
-chown $username /home/$username/$node_folder/docker-compose.yml
-chgrp $username /home/$username/$node_folder/docker-compose.yml
+chown $username $user_home/$node_folder/docker-compose.yml
+chgrp $username $user_home/$node_folder/docker-compose.yml
 
 
 
 
 cat << "DOCKEREOF"
- 
 ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗          
 ██║     ██╔══██╗██║   ██║████╗  ██║██╔════╝██║  ██║██║████╗  ██║██╔════╝          
 ██║     ███████║██║   ██║██╔██╗ ██║██║     ███████║██║██╔██╗ ██║██║  ███╗         
@@ -237,7 +284,7 @@ DOCKEREOF
 
 
 read -n 1 -r -s -p $'Press enter to launch docker compose up -d”...\n'
-cd /home/$username/$node_folder/
+cd $user_home/$node_folder/
 docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
@@ -248,6 +295,8 @@ previous_time=$(date +%s)
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
+
+# This is quite a poor way of monitoring the progress, we will read the docker logs for the next version.
 
 while true; do
     current_time=$(date +%s)
@@ -297,18 +346,6 @@ done
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 # Get health from check from afar
 healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
 
@@ -319,6 +356,5 @@ else
    echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
    isOK="false"
 fi
-
 
 echo "End of script.  Done"
