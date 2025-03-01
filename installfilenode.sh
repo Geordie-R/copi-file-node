@@ -12,6 +12,84 @@ exec > >(tee -i $LOG_LOCATION/filenode.log)
 exec 2>&1
 fi
 
+
+
+
+# Get Server IP
+function GetServerIP() {
+    exec 3<>/dev/tcp/ipv4.icanhazip.com/80
+    echo -e 'GET / HTTP/1.0\r\nhost: ipv4.icanhazip.com\r\n\r' >&3
+
+    local serverip=""
+    while read -r i; do
+        [ "$i" ] && serverip="$i"
+    done <&3
+
+    echo "$serverip"
+}
+
+serverip=$(GetServerIP)
+
+
+
+
+
+# Get the current WAN IP
+echo "Checking The IP: $serverip"
+GetTracertHops() {
+    traceroute_output=$(traceroute $serverip)
+    hop_count=$(echo "$traceroute_output" | tail -n +2 | wc -l)
+    echo "$hop_count"
+}
+
+hops=$(GetTracertHops)
+
+echo "########## Checking for CGNAT ##########"
+
+if [ "$hops" -eq 1 ]; then
+       echo "${GREEN}You're good. CGNAT not detected${COLOR_RESET}"
+else
+    echo "${RED}[CGNAT DETECTED ERROR] There were $hops hops detected. Possible CGNAT. Seek advice.${COLOR_RESET}"
+    is_cgnat_ip "$serverip"
+fi
+echo "########################################"
+
+# Function to check if an IP is in the CGNAT range (100.64.0.0/10)
+is_cgnat_ip() {
+    local ip="$1"
+
+    # Convert IP to integer
+    ip_int=$(printf "%u\n" $(echo "$ip" | awk -F'.' '{print ($1 * 256**3) + ($2 * 256**2) + ($3 * 256) + $4}'))
+
+    # CGNAT range: 100.64.0.0 (1681915904) to 100.127.255.255 (1686110207)
+    cgnat_start=1681915904  # 100.64.0.0
+    cgnat_end=1686110207    # 100.127.255.255
+
+    if [[ "$ip_int" -ge "$cgnat_start" && "$ip_int" -le "$cgnat_end" ]]; then
+        echo "Your IP $wan_ip is within a typical CGNAT range (100.64.0.0/10)."
+    fi
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 apt-get update -y && apt-get upgrade -y
 
 # For output readability
@@ -157,21 +235,7 @@ fi
 user_home=$(eval echo "~$username")
 
 
-# Get Server IP
 
-function GetServerIP() {
-    exec 3<>/dev/tcp/ipv4.icanhazip.com/80
-    echo -e 'GET / HTTP/1.0\r\nhost: ipv4.icanhazip.com\r\n\r' >&3
-
-    local serverip=""
-    while read -r i; do
-        [ "$i" ] && serverip="$i"
-    done <&3
-
-    echo "$serverip"
-}
-
-serverip=$(GetServerIP)
 
 serverurl=http://$serverip:$PoolPortNo
 healthurl=$serverurl/health
