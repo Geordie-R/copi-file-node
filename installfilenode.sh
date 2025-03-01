@@ -12,7 +12,13 @@ exec > >(tee -i $LOG_LOCATION/filenode.log)
 exec 2>&1
 fi
 
+# For output readability
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+COLOR_RESET=$(tput sgr0)
 
+shopt -s globstar dotglob
 
 
 # Get Server IP
@@ -92,13 +98,7 @@ is_cgnat_ip() {
 
 apt-get update -y && apt-get upgrade -y
 
-# For output readability
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-COLOR_RESET=$(tput sgr0)
 
-shopt -s globstar dotglob
 
 cat << "MENUEOF"
 🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽
