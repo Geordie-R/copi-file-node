@@ -37,7 +37,7 @@ function GetServerIP() {
 serverip=$(GetServerIP)
 
 # Install traceroute
-apt-get install -y traceroute
+apt-get install -y traceroute bc
 # Update and upgrade all apps
 apt-get update -y && apt-get upgrade -y
 
