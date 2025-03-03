@@ -37,9 +37,9 @@ function GetServerIP() {
 serverip=$(GetServerIP)
 
 # Install traceroute
-apt-get install -y traceroute bc
+sudo apt-get install -y traceroute bc
 # Update and upgrade all apps
-apt-get update -y && apt-get upgrade -y
+sudo apt-get update -y && sudo apt-get upgrade -y
 
 
 
@@ -78,30 +78,6 @@ is_cgnat_ip() {
         echo "Your IP $wan_ip is within a typical CGNAT range (100.64.0.0/10)."
     fi
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 cat << "MENUEOF"
 🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽🌽
@@ -174,8 +150,6 @@ echo "✅ Your WAN side Pool Port No If Changing From 8001"
 echo "✅ Your LAN side Port No If Changing From 8001"
 echo "✅ Think of a name to call your Docker container or leave it empty for COPINode1"
 
-
-
 echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
 
 read -n 1 -r -s -p $'Press enter to begin...\n'
@@ -192,7 +166,6 @@ if [[ $portno == "" ]] || [ -z "$portno" ];
 then
   portno="22"
 fi
-
 
 if [[ $username == "" ]] || [ -z "$username" ];
 then
@@ -214,89 +187,72 @@ then
   ContainerName="COPINode1"
 fi
 
-
 if [[ $portno == "" ]] || [[ $username == "" ]] || [[ $PoolAccessKey == "" ]] || [[ $PoolPortNo == "" ]];
 then
 echo "${RED}Some details were not provided.  Script is now exiting.  Please run again and provide answers to all of the questions${COLOR_RESET}"
 exit 1
 fi
 
-
 #########################################
-# Create $username user if needed (Recently Moved)
+# Create $username user if needed
 #########################################
 
 if id "$username" >/dev/null 2>&1; then
-        echo "user exists"
+    echo "user exists"
 else
-        echo "user does not exist...creating"
-        adduser --gecos "" --disabled-password $username
-        adduser $username sudo
-
+    echo "user does not exist...creating"
+    sudo adduser --gecos "" --disabled-password $username
+    sudo adduser $username sudo
 fi
 
 user_home=$(eval echo "~$username")
 
-
-
-
 serverurl=http://$serverip:$PoolPortNo
 healthurl=$serverurl/health
 
-
 echo "Your health URL will be $healthurl"
 
-apt-get update -y && sudo apt-get upgrade -y
+sudo apt-get update -y && sudo apt-get upgrade -y
 
 echo "Installing prereqs..."
-apt-get update -y && sudo apt-get upgrade -y
-#sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get update -y && sudo apt-get upgrade -y
 
 #Installing Docker if not found
 if ! command -v docker &> /dev/null
 then
     echo "Docker not found, installing..."
-    curl -fsSL https://get.docker.com | bash
+    curl -fsSL https://get.docker.com | sudo bash
 else
     echo "Docker is already installed."
 fi
 
-
 #Installing Docker Compose
-
 if ! command -v docker-compose &> /dev/null
 then
     echo "Docker Compose not found, installing..."
-    curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose
+    sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose
 else
     echo "Docker Compose is already installed."
 fi
-
-
 
 docker-compose --version
 ubuntuvers=$(lsb_release -rs)
 echo "Ubuntu version $ubuntuvers detected"
 
+sudo ufw limit $portno
+sudo ufw allow $PoolPortNo/tcp
+sudo ufw --force enable
 
-ufw limit $portno
-ufw allow $PoolPortNo/tcp
-ufw --force enable
-
-mkdir -p $user_home/$node_folder/
-
+sudo mkdir -p $user_home/$node_folder/
 cacheurl="$user_home/$node_folder/cache"
 
-
-chown -R $username: $user_home/$node_folder/
+sudo chown -R $username: $user_home/$node_folder/
 cd $user_home/$node_folder/
-
 
 logging_file_name="";
 
 if [[ $action == "filenode" ]];
 then
-
 cat <<EOF-SETUP >$user_home/$node_folder/docker-compose.yml
 name: cornucopias
 services:
@@ -312,16 +268,11 @@ services:
         volumes:
           - $cacheurl:/cache
 EOF-SETUP
-
 fi
 
-
 echo "Applying chgrp and chown to docker compose"
-chown $username $user_home/$node_folder/docker-compose.yml
-chgrp $username $user_home/$node_folder/docker-compose.yml
-
-
-
+sudo chown $username $user_home/$node_folder/docker-compose.yml
+sudo chgrp $username $user_home/$node_folder/docker-compose.yml
 
 cat << "DOCKEREOF"
 ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗          
@@ -347,24 +298,19 @@ cat << "DOCKEREOF"
                                                                                  
 DOCKEREOF
 
-
-
-
 read -n 1 -r -s -p $'Press enter to launch docker compose up -d”...\n'
 cd $user_home/$node_folder/
-docker compose up -d
+sudo docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
 previous_size_bytes=0
 previous_time=$(date +%s)
-
 
 TARGET_SIZE_GB=34.27  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
 
 # This is quite a poor way of monitoring the progress, we will read the docker logs for the next version.
-
 while true; do
     current_time=$(date +%s)
     file_count=$(find cache -type f | wc -l)
@@ -375,9 +321,7 @@ while true; do
     if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
         progress=100
     else
-    
         progress=$(echo "scale=2; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
-        
     fi
 
     # Check if the total size has reached the target
@@ -400,7 +344,6 @@ while true; do
     if (( $(echo "$progress >= 100" | bc -l) )); then
         echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [100%] Please wait... | Speed: ${speed_mb} MB/s"
     else
-    
         printf "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [%.2f%%] | Speed: %.2f MB/s\n" "$progress" "$speed_mb"
     fi
 
@@ -410,8 +353,6 @@ while true; do
 
     sleep 15
 done
-
-
 
 # Get health from check from afar
 healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
