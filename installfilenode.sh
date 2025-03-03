@@ -36,7 +36,10 @@ function GetServerIP() {
 
 serverip=$(GetServerIP)
 
-
+# Install traceroute
+apt-get install -y traceroute
+# Update and upgrade all apps
+apt-get update -y && apt-get upgrade -y
 
 
 
@@ -96,7 +99,7 @@ is_cgnat_ip() {
 
 
 
-apt-get update -y && apt-get upgrade -y
+
 
 
 
