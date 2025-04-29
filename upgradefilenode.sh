@@ -145,8 +145,11 @@ fi
 
 
 
-
+#Setting paths
 user_home=$(eval echo "~$username")
+cacheurl="$user_home/$node_folder/cache"
+cd $user_home/$node_folder/
+
 
 serverurl=http://$serverip:$PoolPortNo
 healthurl=$serverurl/health
@@ -160,10 +163,7 @@ docker-compose --version
 ubuntuvers=$(lsb_release -rs)
 echo "Ubuntu version $ubuntuvers detected"
 
-cacheurl="$user_home/$node_folder/cache"
 
-sudo chown -R $username: $user_home/$node_folder/
-cd $user_home/$node_folder/
 
 
 
