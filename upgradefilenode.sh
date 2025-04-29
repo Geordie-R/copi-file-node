@@ -142,9 +142,6 @@ fi
 
 
 
-
-
-
 #Setting paths
 user_home=$(eval echo "~$username")
 cacheurl="$user_home/$node_folder/cache"
