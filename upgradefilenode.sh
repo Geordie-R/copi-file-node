@@ -196,11 +196,10 @@ fi
 
 
 
-if [[ -n "$poolaccesskey" && $action == "filenode" ]]; then
+if [[ -n "$PoolAccessKey" && $action == "filenode" ]]; then
      # Replace the line while preserving indentation
-    sed -i -E "s/^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*/\1 $poolaccesskey/" docker-compose.yml
+    sed -i -E "s/^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*/\1 $PoolAccessKey/" docker-compose.yml
     echo "${GREEN}Pool Access Key Updated in docker-compose.yml ${COLOR_RESET}"
-    sleep 
 else
     echo "Did not update pool access key as no key was given or node type is not filenode"
 fi
