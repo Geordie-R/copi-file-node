@@ -220,6 +220,7 @@ else
 fi
 
 
+docker compose pull
 
 cat << "DOCKEREOF"
 ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗          
