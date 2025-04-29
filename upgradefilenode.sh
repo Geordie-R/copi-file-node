@@ -192,10 +192,6 @@ echo "Your health URL will be $healthurl"
 
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-echo "Installing prereqs..."
-sudo apt-get update -y && sudo apt-get upgrade -y
-
-
 
 docker-compose --version
 ubuntuvers=$(lsb_release -rs)
@@ -215,12 +211,13 @@ if [[ -n "$poolaccesskey" && $action == "filenode" ]]; then
      # Replace the line while preserving indentation
     sed -i -E "s/^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*/\1 $poolaccesskey/" docker-compose.yml
     echo "${GREEN}Pool Access Key Updated in docker-compose.yml ${COLOR_RESET}"
+    sleep 
 else
     echo "Did not update pool access key as no key was given or node type is not filenode"
 fi
 
 echo "docker compose pull command executing...Please wait..."
-sleep 2
+read -n 1 -r -s -p $'Press enter to do a docker compose pull -d”...\n'
 docker compose pull
 
 cat << "DOCKEREOF"
