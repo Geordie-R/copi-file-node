@@ -204,7 +204,8 @@ else
     echo "Did not update pool access key as no key was given or node type is not filenode"
 fi
 
-read -n 1 -r -s -p $'Press enter to do a docker compose pull -d”...\n'
+read -n 1 -r -s -p $'Press enter to do a docker compose pull -d...\n'
+
 
 sudo docker compose pull
 
