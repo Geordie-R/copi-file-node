@@ -111,8 +111,7 @@ done
 
 echo "Welcome to the COPI File Node Upgrade . We will begin to ask you a series of questions.  Please have to hand:"
 echo "✅ Your Ubuntu Username. Leave empty to use current user"
-echo "✅ Your Pool Access Key From Your Copi Account Online"
-echo "✅ What was the name of your docker container you created when you installed? Maybe you left it as the default COPINode1"
+echo "✅ Your Pool Access Key From Your Copi Account Online if you wish to replace it with a new pool access key"
 
 echo "💡 Note: If you need to copy and paste into terminal, you can paste by Ctrl + Shift + V or by using a right click"
 
@@ -120,7 +119,6 @@ read -n 1 -r -s -p $'Press enter to begin...\n'
 
 read -p "What is your ubuntu username (Leave it empty to just use $USER. Any typed username will be created if it does not exist) ?: " username
 read -p "What is your pool access key if you wish to change it? Please enter or paste it in now from your COPI account.  Leave it blank to not change it:" PoolAccessKey
-read -p "What did you call your docker container (Leave it empty and we will assume you used our default name COPINode1):" ContainerName
 
 ### SET DEFAULTS FOR EMPTY FIELDS
 
@@ -129,10 +127,6 @@ then
   username=$USER
 fi
 
-if [[ $ContainerName == "" ]] || [ -z "$ContainerName" ];
-then
-  ContainerName="COPINode1"
-fi
 
 if [[ $username == "" ]] || [[ $PoolPortNo == "" ]];
 then
@@ -155,7 +149,7 @@ fi
 
 
 if [[ -f docker-compose.yml ]]; then
-    echo "Found the docker-compose.yml file"
+    echo "${GREEN}Found the docker-compose.yml file! ${COLOR_RESET}"
 else
     echo "${RED}Could not find docker-compose.yml ${COLOR_RESET}"
     exit 1
@@ -173,12 +167,13 @@ get_yaml_value() {
 
 
 PoolPortNo=$(get_yaml_value "FILENODES_POOL_PUBLIC_PORT")
-echo "The value is: $PoolPortNo"
 
 
-
-
-
+if [[ -n "$PoolPortNo" ]]; then
+echo "${GREEN}Found your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
+else
+echo "${RED}Did not find your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
+fi
 
 
 
@@ -216,9 +211,9 @@ else
     echo "Did not update pool access key as no key was given or node type is not filenode"
 fi
 
-echo "docker compose pull command executing...Please wait..."
 read -n 1 -r -s -p $'Press enter to do a docker compose pull -d”...\n'
-docker compose pull
+
+sudo docker compose pull
 
 cat << "DOCKEREOF"
 ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗██╗███╗   ██╗ ██████╗          
