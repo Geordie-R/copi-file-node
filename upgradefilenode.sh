@@ -142,13 +142,6 @@ fi
 
 
 
-if [[ -f docker-compose.yml ]]; then
-    echo "${GREEN}Found the docker-compose.yml file! ${COLOR_RESET}"
-else
-    echo "${RED}Could not find docker-compose.yml - exiting! ${COLOR_RESET}"
-    exit 1
-fi
- 
 
 
 
@@ -171,6 +164,22 @@ cacheurl="$user_home/$node_folder/cache"
 
 sudo chown -R $username: $user_home/$node_folder/
 cd $user_home/$node_folder/
+
+
+
+if [[ -f docker-compose.yml ]]; then
+    echo "${GREEN}Found the docker-compose.yml file! ${COLOR_RESET}"
+else
+    echo "${RED}Could not find docker-compose.yml - exiting! ${COLOR_RESET}"
+    exit 1
+fi
+ 
+
+
+
+
+
+
 
 logging_file_name="";
 
