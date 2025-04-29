@@ -1,4 +1,4 @@
-#!/bin/bash
+ho "#!/bin/bash
 logging=false
 
 #If you turn logging on, be aware your filenode.log may contain your pool access key!
@@ -219,7 +219,8 @@ else
     echo "Did not update pool access key as no key was given or node type is not filenode"
 fi
 
-
+echo "docker compose pull command executing...Please wait..."
+sleep 2
 docker compose pull
 
 cat << "DOCKEREOF"
