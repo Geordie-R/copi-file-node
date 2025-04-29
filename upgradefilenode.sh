@@ -128,12 +128,6 @@ then
 fi
 
 
-if [[ $username == "" ]] || [[ $PoolPortNo == "" ]];
-then
-echo "${RED}Some details were not provided.  Script is now exiting.  username or poolportno is empty ${COLOR_RESET}"
-exit 1
-fi
-
 #########################################
 # Create $username user if needed
 #########################################
@@ -141,7 +135,7 @@ fi
 if id "$username" >/dev/null 2>&1; then
     echo "user exists"
 else
-    echo "user does not exist...exiting"
+     echo "${RED}user does not exist...exiting ${COLOR_RESET}"
     exit 1
 fi
 
@@ -151,29 +145,10 @@ fi
 if [[ -f docker-compose.yml ]]; then
     echo "${GREEN}Found the docker-compose.yml file! ${COLOR_RESET}"
 else
-    echo "${RED}Could not find docker-compose.yml ${COLOR_RESET}"
+    echo "${RED}Could not find docker-compose.yml - exiting! ${COLOR_RESET}"
     exit 1
 fi
  
-get_yaml_value() {
-    local key="$1"
-    local file="test.yml"
-
-    # Use grep to find the line, then cut to get the value after the colon
-    local value=$(grep -E "^[[:space:]]*$key:" "$file" | sed -E "s/^[[:space:]]*$key:[[:space:]]*//")
-
-    echo "$value"
-}
-
-
-PoolPortNo=$(get_yaml_value "FILENODES_POOL_PUBLIC_PORT")
-
-
-if [[ -n "$PoolPortNo" ]]; then
-echo "${GREEN}Found your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
-else
-echo "${RED}Did not find your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
-fi
 
 
 
@@ -199,6 +174,25 @@ cd $user_home/$node_folder/
 
 logging_file_name="";
 
+get_yaml_value() {
+    local key="$1"
+    local file="docker-compose.yml"
+
+    # Use grep to find the line, then cut to get the value after the colon
+    local value=$(grep -E "^[[:space:]]*$key:" "$file" | sed -E "s/^[[:space:]]*$key:[[:space:]]*//")
+
+    echo "$value"
+}
+
+
+PoolPortNo=$(get_yaml_value "FILENODES_POOL_PUBLIC_PORT")
+
+
+if [[ -n "$PoolPortNo" ]]; then
+echo "${GREEN}Found your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
+else
+echo "${RED}Did not find your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
+fi
 
 
 
