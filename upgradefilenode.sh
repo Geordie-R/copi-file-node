@@ -246,56 +246,6 @@ cd $user_home/$node_folder/
 sudo docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
-previous_size_bytes=0
-previous_time=$(date +%s)
-
-TARGET_SIZE_GB=35  # Hardcoded last known size
-previous_size_bytes=0
-previous_time=$(date +%s)
-
-# This is quite a poor way of monitoring the progress, we will read the docker logs for the next version.
-while true; do
-    current_time=$(date +%s)
-    file_count=$(find cache -type f | wc -l)
-    total_size_bytes=$(du -sb cache | awk '{print $1}')
-    total_size_gb=$(echo "scale=2; $total_size_bytes / 1024 / 1024 / 1024" | bc)
-
-    # Calculate progress percentage
-    if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
-        progress=100
-    else
-        progress=$(echo "scale=2; ($total_size_gb / $TARGET_SIZE_GB) * 100" | bc)
-    fi
-
-    # Check if the total size has reached the target
-    if (( $(echo "$total_size_gb >= $TARGET_SIZE_GB" | bc -l) )); then
-        echo "✅ Target size reached: $total_size_gb GB."
-        break  # Exit the loop if the size is reached
-    fi
-
-    # Calculate download speed (MB/s)
-    size_difference=$((total_size_bytes - previous_size_bytes))
-    time_difference=$((current_time - previous_time))
-
-    if [ "$time_difference" -gt 0 ]; then
-        speed_mb=$(echo "scale=2; $size_difference / 1024 / 1024 / $time_difference" | bc)
-    else
-        speed_mb=0
-    fi
-
-    # Display progress and speed
-    if (( $(echo "$progress >= 100" | bc -l) )); then
-        echo "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [100%] Please wait... | Speed: ${speed_mb} MB/s"
-    else
-        printf "$(date): Files in cache: $file_count, Total size: ${total_size_gb}GB [%.2f%%] | Speed: %.2f MB/s\n" "$progress" "$speed_mb"
-    fi
-
-    # Store current values for next iteration
-    previous_size_bytes=$total_size_bytes
-    previous_time=$current_time
-
-    sleep 15
-done
 
 # Get health from check from afar
 healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
