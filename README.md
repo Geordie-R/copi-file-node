@@ -19,6 +19,7 @@ chmod +x installfilenode.sh
 ```
 
 # Upgrade File Node
+Video here (no sound got it done in a rush): https://geordier.co.uk/downloads/copi_linux_upgrade_nosound.mp4
 ```
 rm -rf upgradefilenode.sh
 wget -O upgradefilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/upgradefilenode.sh
