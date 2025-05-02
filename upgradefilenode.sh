@@ -93,7 +93,7 @@ fi
 if id "$username" >/dev/null 2>&1; then
     #echo "user exists"
 else
-     echo "${RED}user does not exist...exiting ${COLOR_RESET}"
+     echo "${RED}❌ user does not exist...exiting ${COLOR_RESET}"
     exit 1
 fi
 
@@ -150,7 +150,7 @@ if choose_docker_compose_file; then
     corndockerpath="$selected_path"
     echo "✔️ Cornucopias docker-compose.yml found: $corndockerpath"
 else
-    echo "No path selected or an error occurred."
+    echo "❌ No path selected or an error occurred."
     exit 1
 fi
 
@@ -190,7 +190,7 @@ PoolPortNo=$(get_yaml_value "FILENODES_POOL_PUBLIC_PORT")
 if [[ -n "$PoolPortNo" ]]; then
 echo "${GREEN}✔️ Found your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
 else
-echo "${RED}Did not find your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
+echo "${RED}❌ Did not find your pool port number in the docker-compose.yml file: $PoolPortNo ${COLOR_RESET}"
 fi
 
 
@@ -200,7 +200,7 @@ if [[ -n "$PoolAccessKey" && $action == "filenode" ]]; then
     sed -i -E "s/^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*/\1 $PoolAccessKey/" docker-compose.yml
     echo "${GREEN}✔️ Pool Access Key Updated in docker-compose.yml ${COLOR_RESET}"
 else
-    echo "Did not update pool access key as no key was given or node type is not filenode"
+    echo "❌ Did not update pool access key as no key was given or node type is not filenode"
 fi
 
 
