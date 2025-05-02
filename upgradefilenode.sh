@@ -91,7 +91,7 @@ then
 fi
 
 if id "$username" >/dev/null 2>&1; then
-    #echo "user exists"
+    echo "$username user exists"
 else
      echo "${RED}❌ user does not exist...exiting ${COLOR_RESET}"
     exit 1
