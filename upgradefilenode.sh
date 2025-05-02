@@ -157,21 +157,6 @@ fi
 
 echo "Cornucopias directory is $corndockerdir"
 
-
-
-
-
-
-
-
-
-#Setting paths
-#user_home=$(eval echo "~$username")
-#cacheurl="$user_home/$node_folder/cache"
-#cd $user_home/$node_folder/
-
-
-
 get_yaml_value() {
     local key="$1"
     local file="$corndockerpath"
@@ -195,12 +180,15 @@ fi
 
 
 if [[ -n "$PoolAccessKey" ]]; then
-     # Replace the line while preserving indentation
-    sed -i -E "s/^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*/\1 $PoolAccessKey/" docker-compose.yml
+    echo "got here A"
+    # Replace the line while preserving indentation using '@' as delimiter
+    sed -i -E "s@^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*@\1 $PoolAccessKey@" docker-compose.yml
     echo "${GREEN}✔️ Pool Access Key Updated in docker-compose.yml ${COLOR_RESET}"
 else
+    echo "got here B"
     echo "❌ Did not update pool access key as no key was given or node type is not filenode"
 fi
+
 
 
 serverurl=http://$serverip:$PoolPortNo
