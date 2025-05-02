@@ -250,7 +250,7 @@ cat << "DOCKEREOF"
 DOCKEREOF
 
 read -n 1 -r -s -p $'Press enter to launch docker compose up -d”...\n'
-cd $corndockerdir/
+cd "$corndockerdir/"
 sudo docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
