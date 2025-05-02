@@ -180,12 +180,10 @@ fi
 
 
 if [[ -n "$PoolAccessKey" ]]; then
-    echo "got here A"
     # Replace the line while preserving indentation using '@' as delimiter
     sed -i -E "s@^([[:space:]]*FILENODES_POOL_ACCESS_KEY:).*@\1 $PoolAccessKey@" $corndockerpath
     echo "${GREEN}✔️ Pool Access Key Updated in docker-compose.yml ${COLOR_RESET}"
 else
-    echo "got here B"
     echo "❌ Did not update pool access key as no key was given or node type is not filenode"
 fi
 
