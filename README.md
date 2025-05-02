@@ -1,8 +1,10 @@
 # Cornucopias File Node Installer For Ubuntu
-An easy to use installer for the copi file node to take the complexity out of deploying on Ubuntu using the terminal.
+An easy to use installer, uninstaller and upgrader for the copi file node to take the complexity out of deploying on Ubuntu using the terminal.
 
 # Instructions
-Copy and paste the code below into the terminal of your Ubuntu vps/node and follow the on-screen instructions.  If you need to paste code into terminal use Ctrl + Shift + V or right click on the terminal can work too.  If you do something wrong and want to quit and start again just press Ctrl + C to cancel and then you can run the uninstall code below, before starting all over again with the Install code.
+If you have come here just for the upgrade code, do not run the installer and uninstaller code.
+
+Connect to your node and then once you are in, copy and paste the code you need below into the terminal of your Linux/Ubuntu node and follow the on-screen instructions.  If you need to paste code into terminal use Ctrl + Shift + V or right click on the terminal can work too.  If you do something wrong and want to quit and start again just press Ctrl + C to cancel and then you can run the uninstall code below, before starting all over again with the Install code.
 
 If you just want to upgrade your node and replace the pool access key ONLY use the Upgrade File Node script.
 
