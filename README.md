@@ -19,7 +19,7 @@ chmod +x installfilenode.sh
 # Upgrade File Node
 ```
 rm -rf upgradefilenode.sh
-wget -O upgradefilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/main/upgradefilenode.sh
+wget -O upgradefilenode.sh https://raw.githubusercontent.com/Geordie-R/copi-file-node/refs/heads/UniversalUpgrade/upgradefilenode.sh
 chmod +x upgradefilenode.sh
 ./upgradefilenode.sh
 ```
