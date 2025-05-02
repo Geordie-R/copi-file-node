@@ -218,7 +218,7 @@ echo "Ubuntu version $ubuntuvers detected"
 
 logging_file_name="";
 
-
+cd "$corndockerdir/"
 
 read -n 1 -r -s -p $'Press enter to do a docker compose pull -d...\n'
 
@@ -250,7 +250,7 @@ cat << "DOCKEREOF"
 DOCKEREOF
 
 read -n 1 -r -s -p $'Press enter to launch docker compose up -d”...\n'
-cd "$corndockerdir/"
+
 sudo docker compose up -d
 echo "Please be patient ... 🌽🌽🌽"
 sleep 15
