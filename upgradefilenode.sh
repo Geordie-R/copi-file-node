@@ -97,7 +97,6 @@ else
     exit 1
 fi
 
-
 read -n 1 -r -s -p $'In order for us to work for all kinds of installations, we will now go hunting for your COPI docker-compose.yml file...\n'
 
 
