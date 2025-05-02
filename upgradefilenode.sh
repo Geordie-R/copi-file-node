@@ -174,7 +174,7 @@ echo "Cornucopias directory is $corndockerdir"
 
 get_yaml_value() {
     local key="$1"
-    local file="$corndockerfile"
+    local file="$corndockerpath"
 
     # Use grep to find the line, then cut to get the value after the colon
     local value=$(grep -E "^[[:space:]]*$key:" "$file" | sed -E "s/^[[:space:]]*$key:[[:space:]]*//")
