@@ -359,7 +359,8 @@ done
 healthResponse=$(curl -s --interface "$(curl -s ifconfig.me)" "$healthurl")
 
 if [[ $healthResponse == "Ok" ]]; then
-   echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. ${COLOR_RESET}"
+   echo "${GREEN}Node is OK! You're done! Now why not download uptimerobot app and let it watch KEYWORD Ok at $healthurl so you can be notified when it is offline or failing. If you have 8 or more nodes and wish to attract delegators to your node, be sure to make your node public in your account by changing the private drop down to public.${COLOR_RESET}"
+   echo "${GREEN}Also, please note it may take a couple of days for your node to show on the public pools page once you make it public.${COLOR_RESET}"
    isOK="true"
 else
    echo "${YELLOW}Checking $IP....Node is currently showing:$healthResponse${COLOR_RESET}"
