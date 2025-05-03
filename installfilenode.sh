@@ -1,4 +1,5 @@
 #!/bin/bash
+export LC_NUMERIC=C
 logging=false
 
 #If you turn logging on, be aware your filenode.log may contain your pool access key!
