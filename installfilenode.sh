@@ -307,7 +307,7 @@ sleep 15
 previous_size_bytes=0
 previous_time=$(date +%s)
 
-TARGET_SIZE_GB=35  # Hardcoded last known size
+TARGET_SIZE_GB=34.28  # Hardcoded last known size
 previous_size_bytes=0
 previous_time=$(date +%s)
 
