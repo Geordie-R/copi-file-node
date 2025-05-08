@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script is for migrating a COPI filenode to a new VPS.
+# This script is for migrating a COPI filenode to a new VPS. Work in progress
 
 set -eu -o pipefail # fail on error , debug all lines
 
